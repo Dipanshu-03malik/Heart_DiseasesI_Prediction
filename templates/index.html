@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+       
+</head>
+<body>
+    <div class="container">
+            
+                <h1><span class="underline-span">Heart Disease Prediction</span></h1>
+                <form id="heartDiseaseForm" class="grid-form">
+                    <!-- Personal Info -->
+                    <div class="personal-info" style="grid-column: span 4;">
+                        <div>
+                            <label for="age">Age:</label>
+                            <input type="number" id="age" name="age" required>
+                        </div>
+                        <div>
+                            <label for="sex">Sex:</label>
+                            <select id="sex" name="sex" required>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 1 -->
+                    <div style="grid-column: span 2;">
+                        <label for="cp">Chest Pain Type:</label>
+                        <select id="cp" name="cp" required>
+                            <option value="0">Typical angina</option>
+                            <option value="1">Atypical angina</option>
+                            <option value="2">Non-anginal pain</option>
+                            <option value="3">Asymptomatic</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label for="trestbps">Resting Blood Pressure (mm Hg):</label>
+                        <input type="number" id="trestbps" name="trestbps" required>
+                    </div>
+        
+                    <!-- Row 2 -->
+                    <div style="grid-column: span 2;">
+                        <label for="chol">Serum Cholesterol (mg/dl):</label>
+                        <input type="number" id="chol" name="chol" required>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label for="fbs">Fasting Blood Sugar (mg/dl):</label>
+                        <select id="fbs" name="fbs" required>
+                            <option value="1">Greater than 120 mg/dl</option>
+                            <option value="0">Less than or equal to 120 mg/dl</option>
+                        </select>
+                    </div>
+        
+                    <!-- Row 3 -->
+                    <div style="grid-column: span 1;">
+                        <label for="restecg">Resting Electrocardiographic Results:</label>
+                        <select id="restecg" name="restecg" required>
+                            <option value="0">Normal</option>
+                            <option value="1">Having ST-T wave abnormality</option>
+                            <option value="2">Showing probable or definite left ventricular hypertrophy</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: span 1;">
+                        <label for="thalach">Maximum Heart Rate Achieved:</label>
+                        <input type="number" id="thalach" name="thalach" required>
+                    </div>
+                    <div style="grid-column: span 1;">
+                        <label for="exang">Exercise Induced Angina:</label>
+                        <select id="exang" name="exang" required>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: span 1;">
+                        <label for="oldpeak">ST Depression Induced by Exercise:</label>
+                        <input type="number" id="oldpeak" name="oldpeak" step="0.01" required>
+                    </div>
+                    
+                    <!-- Last Row -->
+                    <div style="grid-column: span 2;">
+                        <label for="slope">Slope of the Peak Exercise ST Segment:</label>
+                        <select id="slope" name="slope" required>
+                            <option value="0">Upsloping</option>
+                            <option value="1">Flat</option>
+                            <option value="2">Downsloping</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label for="ca">Number of Major Vessels Colored by Fluoroscopy:</label>
+                        <select id="ca" name="ca" required>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+        
+                    <div style="grid-column: span 4;">
+                        <label for="thal">Thalassemia:</label>
+                        <select id="thal" name="thal" required>
+                            <option value="0">Normal</option>
+                            <option value="1">Fixed Defect</option>
+                            <option value="2">Reversible Defect</option>
+                        </select>
+                    </div>
+        
+                    <input type="submit" id="makePred" value="Predict" style="grid-column: span 4;">
+                </form>
+                <div id="result"></div>
+            </div>
+        </div>
+
+    <script>
+        document.getElementById("heartDiseaseForm").addEventListener("submit", function(event){
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData)),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultElement = document.getElementById('result');
+        if (data[0] === 1) {
+            resultElement.innerHTML = "Heart disease detected";
+            resultElement.style.backgroundColor = "#ffcccc"; // Light red
+            resultElement.style.color = "#cc0000"; // Darker red
+        } else {
+            resultElement.innerHTML = "No heart disease detected";
+            resultElement.style.backgroundColor = "#ccffcc"; // Light green
+            resultElement.style.color = "#006600"; // Darker green
+        }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+
